@@ -1,0 +1,233 @@
+﻿@model IEnumerable<StudentManagementSystem.Models.Student>
+@inject StudentManagementSystem.Services.AzureBlobStorageService BlobStorageService
+
+@{
+    ViewData["Title"] = "Archive - Recycle Bin";
+    
+    // Provide default values to prevent null reference errors
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int totalCount = ViewBag.TotalCount ?? 0;
+    int totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 bg-header" style="margin-bottom: 90px;">
+    <div class="row py-5">
+        <div class="col-12 pt-lg-5 mt-lg-5 text-center">
+            <h1 class="display-4 text-white animated zoomIn">Archive / Recycle Bin</h1>
+            <a asp-controller="Home" asp-action="Index" class="h5 text-white">Home</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="#" class="h5 text-white">Archive</a>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Archive Content Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+            <h5 class="fw-bold text-primary text-uppercase">Recycle Bin</h5>
+            <h1 class="mb-0">View, Restore, or Permanently Delete Archived Students</h1>
+        </div>
+
+        <!-- Add AntiForgeryToken for AJAX -->
+        @Html.AntiForgeryToken()
+
+        <!-- Action Bar -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="bg-warning text-dark d-inline-block rounded-pill px-4 py-2">
+                    <i class="fa fa-archive me-2"></i> @totalCount Archived Students
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="d-flex justify-content-end gap-2">
+                    <select id="pageSizeSelect" class="form-select w-auto" onchange="changePageSize(this.value)">
+                        <option value="5">5 per page</option>
+                        <option value="10" selected>10 per page</option>
+                        <option value="20">20 per page</option>
+                        <option value="50">50 per page</option>
+                    </select>
+                    @if (Model != null && Model.Any())
+                    {
+                        <button type="button" class="btn btn-danger" onclick="confirmEmptyRecycleBin()">
+                            <i class="fa fa-trash-alt me-2"></i>Empty Recycle Bin
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Archived Students Table -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>Student</th>
+                            <th>Profile</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Archived Date</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model)
+                        {
+                            var sasUrl = !string.IsNullOrEmpty(student.ProfileImageUrl) ?
+                                BlobStorageService.GetBlobSasUri(BlobStorageService.GetBlobNameFromUrl(student.ProfileImageUrl)) : null;
+                            
+                            <tr>
+                                <td>
+                                    <strong>@student.FullName</strong><br />
+                                    <small class="text-muted">ID: @(student.Id?.Length > 8 ? student.Id.Substring(0, 8) : student.Id ?? "N/A")</small>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(sasUrl))
+                                    {
+                                        <img src="@sasUrl" alt="@student.FullName" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover; border: 2px solid #f59e0b;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-warning bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                            <i class="fa fa-user-graduate text-warning"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-muted small">@student.Email</td>
+                                <td class="text-muted small">@student.MobileNumber</td>
+                                <td class="text-muted small">
+                                    <i class="fa fa-calendar-alt me-1"></i>
+                                    @student.UpdatedAt.ToString("MMM dd, yyyy HH:mm")
+                                </td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-sm btn-success me-1" onclick="confirmRestore('@student.Id', '@student.FullName.Replace("'", "\\'")')" title="Restore">
+                                        <i class="fa fa-trash-restore"></i> Restore
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmPermanentDelete('@student.Id', '@student.FullName.Replace("'", "\\'")')" title="Permanent Delete">
+                                        <i class="fa fa-trash-alt"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (totalPages > 1)
+            {
+                <div class="d-flex justify-content-center mt-5">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-pageSize="@pageSize">
+                                    <i class="fa fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                if (i == 1 || i == totalPages || (i >= currentPage - 2 && i <= currentPage + 2))
+                                {
+                                    <li class="page-item @(i == currentPage ? "active" : "")">
+                                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@pageSize">@i</a>
+                                    </li>
+                                }
+                                else if (i == currentPage - 3 || i == currentPage + 3)
+                                {
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                }
+                            }
+                            
+                            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-pageSize="@pageSize">
+                                    <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="bg-light rounded p-5">
+                    <i class="fa fa-trash-restore fa-4x text-warning mb-3"></i>
+                    <h3>Recycle Bin is Empty</h3>
+                    <p class="text-muted">No archived students found. When you deactivate a student, they will appear here.</p>
+                    <a asp-controller="Student" asp-action="Index" class="btn btn-primary mt-3">
+                        <i class="fa fa-users me-2"></i>View Active Students
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- Archive Content End -->
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Get the anti-forgery token
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        function changePageSize(size) {
+        window.location.href = '@Url.Action("Index")?page=1&pageSize=' + size;
+        }
+
+        function confirmRestore(id, name) {
+        if (confirm('Restore Student\n\nAre you sure you want to restore "' + name + '"?\n\nThe student will become active again.')) {
+        $.ajax({
+        url: '/Archive/Restore',
+        type: 'POST',
+        data: { id: id, __RequestVerificationToken: token },
+        success: function() {
+        alert('Student restored successfully');
+        location.reload();
+        },
+        error: function() {
+        alert('Failed to restore student');
+        }
+        });
+        }
+        }
+
+        function confirmPermanentDelete(id, name) {
+        if (confirm('PERMANENT DELETE\n\nAre you absolutely sure you want to permanently delete "' + name + '"?\n\nThis action CANNOT be undone.')) {
+        $.ajax({
+        url: '/Archive/PermanentDelete',
+        type: 'POST',
+        data: { id: id, __RequestVerificationToken: token },
+        success: function() {
+        alert('Student permanently deleted');
+        location.reload();
+        },
+        error: function() {
+        alert('Failed to delete student');
+        }
+        });
+        }
+        }
+
+        function confirmEmptyRecycleBin() {
+        if (confirm('EMPTY RECYCLE BIN\n\nAre you absolutely sure you want to permanently delete ALL archived students?\n\nThis action CANNOT be undone.')) {
+        $.ajax({
+        url: '/Archive/EmptyRecycleBin',
+        type: 'POST',
+        data: { __RequestVerificationToken: token },
+        success: function() {
+        alert('Recycle bin emptied successfully');
+        location.reload();
+        },
+        error: function() {
+        alert('Failed to empty recycle bin');
+        }
+        });
+        }
+        }
+    </script>
+}

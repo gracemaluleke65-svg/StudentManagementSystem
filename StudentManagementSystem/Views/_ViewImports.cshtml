@@ -1,0 +1,11 @@
+﻿@using StudentManagementSystem
+@using StudentManagementSystem.Models
+@using StudentManagementSystem.ViewModels
+@using StudentManagementSystem.Services
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+    // Set SAST time for all views (SAST = UTC+2)
+    ViewBag.SastTime = DateTime.UtcNow.AddHours(2).ToString("ddd, dd MMM yyyy HH:mm:ss");
+}

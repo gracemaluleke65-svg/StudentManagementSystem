@@ -1,0 +1,93 @@
+﻿@model StudentManagementSystem.ViewModels.StudentViewModel
+
+@{
+    ViewData["Title"] = "Add New Student";
+}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 bg-header" style="margin-bottom: 90px;">
+    <div class="row py-5">
+        <div class="col-12 pt-lg-5 mt-lg-5 text-center">
+            <h1 class="display-4 text-white animated zoomIn">Add New Student</h1>
+            <a asp-controller="Home" asp-action="Index" class="h5 text-white">Home</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a asp-controller="Student" asp-action="Index" class="h5 text-white">Students</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="#" class="h5 text-white">Add</a>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Form Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="bg-light rounded p-5">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input asp-for="FirstName" class="form-control" placeholder="Enter first name" required>
+                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                </div>
+                            
+                                <div class="col-md-6">
+                                    <label asp-for="LastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                    <input asp-for="LastName" class="form-control" placeholder="Enter last name" required>
+                                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                                    </div>
+                            
+                                    <div class="col-12">
+                                        <label asp-for="Email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                        <input asp-for="Email" type="email" class="form-control" placeholder="student@example.com" required>
+                                            <span asp-validation-for="Email" class="text-danger small"></span>
+                                        </div>
+                            
+                                        <div class="col-md-6">
+                                            <label asp-for="MobileNumber" class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                                            <input asp-for="MobileNumber" class="form-control" placeholder="+1234567890" required>
+                                                <span asp-validation-for="MobileNumber" class="text-danger small"></span>
+                                            </div>
+                            
+                                            <div class="col-md-6">
+                                                <label asp-for="EnrolmentStatus" class="form-label">Enrolment Status</label>
+                                                <select asp-for="EnrolmentStatus" class="form-select">
+                                                    <option value="Active">Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                </select>
+                                            </div>
+                            
+                                            <div class="col-12">
+                                                <label asp-for="ProfileImage" class="form-label">Profile Image</label>
+                                                <input asp-for="ProfileImage" type="file" class="form-control" accept=".jpg,.jpeg,.png">
+                                                    <small class="text-muted">JPEG or PNG only, max 5MB</small>
+                                                    <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+                                                </div>
+                            
+                                                <div class="col-12">
+                                                    <hr>
+                                                    <div class="d-flex justify-content-between">
+                                                        <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                                                            <i class="fa fa-arrow-left me-2"></i>Cancel
+                                                        </a>
+                                                        <button type="submit" class="btn btn-primary px-5">
+                                                            <i class="fa fa-save me-2"></i>Save Student
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Form End -->
+                    @section Scripts {
+                        @{
+                            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+                        }
+                    }

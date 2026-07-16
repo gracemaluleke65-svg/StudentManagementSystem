@@ -1,0 +1,47 @@
+﻿# Visual Studio / .NET
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# User secrets & local settings
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Azure credentials (if any)
+*.publishsettings
+*.azurePubxml
+
+# Entity Framework
+*.efcore
+
+# Logs
+logs/
+*.log
+
+# Uploads / temp
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep
+
+# Test results
+TestResults/
+*.coverage
+*.trx
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo

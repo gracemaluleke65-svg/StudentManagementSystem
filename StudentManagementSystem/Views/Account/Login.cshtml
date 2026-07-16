@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    var googleConfigured = ViewBag.GoogleClientId?.ToString().Length > 10 && !ViewBag.GoogleClientId.ToString().StartsWith("YOUR_");
+    var gitHubConfigured = ViewBag.GitHubClientId?.ToString().Length > 5 && !ViewBag.GitHubClientId.ToString().StartsWith("YOUR_");
+}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 bg-header" style="margin-bottom: 90px;">
+    <div class="row py-5">
+        <div class="col-12 pt-lg-5 mt-lg-5 text-center">
+            <h1 class="display-4 text-white animated zoomIn">Welcome Back</h1>
+            <a asp-controller="Home" asp-action="Index" class="h5 text-white">Home</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="#" class="h5 text-white">Login</a>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Login Content Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="bg-light rounded p-5">
+                    
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-circle me-2"></i>@TempData["Error"]
+                        </div>
+                    }
+
+                    <!-- ADMIN SECTION - Email & Password -->
+                    <div class="mb-4">
+                        <h4 class="mb-3">
+                            <i class="fa fa-shield-alt text-primary me-2"></i>
+                            Administrator Access
+                            <small class="badge bg-primary ms-2">Secure Login</small>
+                        </h4>
+                        
+                        <form asp-controller="Account" asp-action="AdminLogin" method="post">
+                            @Html.AntiForgeryToken()
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" name="Email" class="form-control" placeholder="Enter your email" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="Password" class="form-control" placeholder="Enter your password" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 py-2">
+                                <i class="fa fa-sign-in-alt me-2"></i>Sign in as Admin
+                            </button>
+                        </form>
+                        
+                        <!-- Demo Credentials -->
+                        <div class="alert alert-warning mt-3 small">
+                            <i class="fa fa-info-circle me-1"></i>
+                            <strong>Demo Admin:</strong> admin@futuretech.edu / Admin@123
+                        </div>
+                    </div>
+
+                    <div class="text-center my-4">
+                        <span class="text-muted">OR</span>
+                    </div>
+
+                    <!-- STUDENT SECTION - OAuth Login -->
+                    <div>
+                        <h4 class="mb-3">
+                            <i class="fa fa-users text-success me-2"></i>
+                            Student Access
+                            <small class="badge bg-success ms-2">OAuth 2.0</small>
+                        </h4>
+                        
+                        <div class="d-grid gap-3">
+                            @if (googleConfigured)
+                            {
+                                <a asp-action="ExternalLogin" asp-controller="Account" asp-route-provider="Google"
+                                       class="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2 py-2">
+                                    <i class="fab fa-google fa-lg"></i>
+                                    <span>Continue with Google</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning text-center small mb-0">
+                                    <i class="fa fa-exclamation-triangle me-2"></i>
+                                    Google Sign-In is currently unavailable.
+                                </div>
+                            }
+
+                            @if (gitHubConfigured)
+                            {
+                                <a asp-action="ExternalLogin" asp-controller="Account" asp-route-provider="GitHub"
+                                       class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2 py-2">
+                                    <i class="fab fa-github fa-lg"></i>
+                                    <span>Continue with GitHub</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Security Info -->
+                    <hr class="my-4">
+                    <div class="text-center">
+                        <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
+                            <span class="badge bg-light text-dark px-3 py-2">
+                                <i class="fa fa-shield-alt text-primary me-1"></i> OAuth 2.0
+                            </span>
+                            <span class="badge bg-light text-dark px-3 py-2">
+                                <i class="fa fa-lock text-success me-1"></i> TLS 1.3
+                            </span>
+                            <span class="badge bg-light text-dark px-3 py-2">
+                                <i class="fab fa-microsoft text-info me-1"></i> Azure Hosted
+                            </span>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fa fa-question-circle me-1"></i>
+                            Need help? Contact your system administrator
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Login Content End -->

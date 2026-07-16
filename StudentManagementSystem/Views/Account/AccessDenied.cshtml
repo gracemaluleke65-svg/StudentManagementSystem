@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 bg-header" style="margin-bottom: 90px;">
+    <div class="row py-5">
+        <div class="col-12 pt-lg-5 mt-lg-5 text-center">
+            <h1 class="display-4 text-white animated zoomIn">Access Denied</h1>
+            <a asp-controller="Home" asp-action="Index" class="h5 text-white">Home</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="#" class="h5 text-white">Access Denied</a>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Access Denied Content Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <!-- Animated Shield Icon -->
+                <div class="mb-4">
+                    <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center p-4" style="width: 150px; height: 150px;">
+                        <i class="fas fa-shield-alt fa-6x text-danger"></i>
+                    </div>
+                </div>
+
+                <!-- Title Section -->
+                <h1 class="display-1 fw-bold text-danger mb-3">403</h1>
+                <h2 class="fw-bold text-dark mb-3">Access Denied</h2>
+                
+                <div class="d-flex justify-content-center gap-2 mb-4">
+                    <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">
+                        <i class="fa fa-exclamation-triangle me-1"></i> Unauthorized
+                    </span>
+                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">
+                        <i class="fa fa-clock me-1"></i> Authentication Required
+                    </span>
+                </div>
+
+                <!-- Message Section -->
+                <div class="bg-light rounded p-4 mb-4">
+                    <p class="text-muted mb-0">
+                        <i class="fa fa-lock me-2 text-danger"></i>
+                        You need to be authenticated to access this resource. Please login with your credentials to continue.
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-3 mb-4">
+                    <a asp-action="Login" asp-controller="Account" class="btn btn-primary btn-lg rounded-pill">
+                        <i class="fa fa-sign-in-alt me-2"></i>Login to Your Account
+                        <i class="fa fa-arrow-right ms-2"></i>
+                    </a>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary btn-lg rounded-pill">
+                        <i class="fa fa-home me-2"></i>Return to Homepage
+                    </a>
+                </div>
+
+                <!-- Quick Suggestions -->
+                <div class="bg-light rounded p-3 mb-4">
+                    <p class="text-muted small mb-2">
+                        <i class="fa fa-lightbulb me-1 text-warning"></i> Quick suggestions:
+                    </p>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a asp-action="Login" asp-controller="Account" asp-route-provider="Google" class="btn btn-outline-primary w-100">
+                                <i class="fab fa-google me-1"></i> Sign in with Google
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a asp-action="Login" asp-controller="Account" asp-route-provider="GitHub" class="btn btn-outline-dark w-100">
+                                <i class="fab fa-github me-1"></i> Sign in with GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="alert alert-info">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="fa fa-info-circle mt-1"></i>
+                        <div class="text-start">
+                            <small class="d-block">
+                                <strong>Need help?</strong> If you believe this is an error:
+                            </small>
+                            <small class="d-block">• Clear your browser cookies and cache</small>
+                            <small class="d-block">• Contact your system administrator</small>
+                            <small class="d-block">• Check if you have the required permissions</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div class="mt-4">
+                    <a href="mailto:support@futuretech.edu" class="text-decoration-none small">
+                        <i class="fa fa-envelope me-1"></i> support@futuretech.edu
+                    </a>
+                    <span class="text-muted mx-2">|</span>
+                    <a href="#" class="text-decoration-none small">
+                        <i class="fa fa-headset me-1"></i> 24/7 Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Access Denied Content End -->

@@ -1,0 +1,378 @@
+﻿@{
+    ViewData["Title"] = "Home - Student Management System";
+}
+
+<!-- Carousel Start -->
+<div class="container-fluid p-0">
+    <div id="header-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img class="w-100" src="~/img/carousel-1.jpg" alt="Image">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h5 class="text-white text-uppercase mb-3 animated slideInDown">Smart Student Management</h5>
+                            <h1 class="display-1 text-white mb-md-4 animated zoomIn">Welcome to FutureTech Academy</h1>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a asp-controller="Student" asp-action="Index" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Dashboard</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Get Started</a>
+                            }
+                            <a asp-controller="Home" asp-action="Privacy" class="btn btn-outline-light py-md-3 px-md-5 animated slideInRight">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="w-100" src="~/img/carousel-2.jpg" alt="Image">
+                        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                            <div class="p-3" style="max-width: 900px;">
+                                <h5 class="text-white text-uppercase mb-3 animated slideInDown">Powered by Microsoft Azure</h5>
+                                <h1 class="display-1 text-white mb-md-4 animated zoomIn">Enterprise-Grade Cloud Solution</h1>
+                                <a asp-controller="Analytics" asp-action="Index" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">View Analytics</a>
+                                <a asp-controller="Student" asp-action="Index" class="btn btn-outline-light py-md-3 px-md-5 animated slideInRight">Manage Students</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#header-carousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#header-carousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        <!-- Carousel End -->
+        <!-- Facts Start -->
+        <div class="container-fluid facts py-5 pt-lg-0">
+            <div class="container py-5 pt-lg-0">
+                <div class="row gx-0">
+                    <div class="col-lg-3 wow zoomIn" data-wow-delay="0.1s">
+                        <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                            <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                                <i class="fa fa-users text-primary"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="text-white mb-0">Total Students</h5>
+                                <h1 class="text-white mb-0" data-toggle="counter-up">@ViewBag.StudentCount</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 wow zoomIn" data-wow-delay="0.3s">
+                        <div class="bg-light shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                            <div class="bg-primary d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                                <i class="fa fa-user-check text-white"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="text-primary mb-0">Active Students</h5>
+                                <h1 class="mb-0" data-toggle="counter-up">@ViewBag.ActiveCount</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 wow zoomIn" data-wow-delay="0.6s">
+                        <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                            <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                                <i class="fa fa-chalkboard-teacher text-primary"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="text-white mb-0">Active Courses</h5>
+                                <h1 class="text-white mb-0" data-toggle="counter-up">24</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 wow zoomIn" data-wow-delay="0.9s">
+                        <div class="bg-light shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                            <div class="bg-primary d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                                <i class="fa fa-cloud-upload-alt text-white"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="text-primary mb-0">Azure Services</h5>
+                                <h1 class="mb-0" data-toggle="counter-up">3</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Facts End -->
+        <!-- About Start -->
+        <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-7">
+                        <div class="section-title position-relative pb-3 mb-5">
+                            <h5 class="fw-bold text-primary text-uppercase">About The System</h5>
+                            <h1 class="mb-0">Complete Student Management Solution Built on Azure</h1>
+                        </div>
+                        <p class="mb-4">FutureTech Academy is a comprehensive student management system designed for modern educational institutions. Built on Microsoft Azure with Cosmos DB and Blob Storage, we provide enterprise-grade performance and security.</p>
+                        <div class="row g-0 mb-3">
+                            <div class="col-sm-6 wow zoomIn" data-wow-delay="0.2s">
+                                <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Cloud Native</h5>
+                                <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Secure by Design</h5>
+                            </div>
+                            <div class="col-sm-6 wow zoomIn" data-wow-delay="0.4s">
+                                <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Real-time Analytics</h5>
+                                <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Archive & Restore</h5>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-4 wow fadeIn" data-wow-delay="0.6s">
+                            <div class="bg-primary d-flex align-items-center justify-content-center rounded" style="width: 60px; height: 60px;">
+                                <i class="fa fa-phone-alt text-white"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="mb-2">Call to ask any question</h5>
+                                <h4 class="text-primary mb-0">+012 345 6789</h4>
+                            </div>
+                        </div>
+                        <a asp-controller="Student" asp-action="Index" class="btn btn-primary py-3 px-5 mt-3 wow zoomIn" data-wow-delay="0.9s">Explore Features</a>
+                    </div>
+                    <div class="col-lg-5" style="min-height: 500px;">
+                        <div class="position-relative h-100">
+                            <img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.9s" src="~/img/about.jpg" style="object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- About End -->
+            <!-- Features Start -->
+            <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="container py-5">
+                    <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                        <h5 class="fw-bold text-primary text-uppercase">Why Choose Us</h5>
+                        <h1 class="mb-0">Powered by Microsoft Azure Cloud</h1>
+                    </div>
+                    <div class="row g-5">
+                        <div class="col-lg-4">
+                            <div class="row g-5">
+                                <div class="col-12 wow zoomIn" data-wow-delay="0.2s">
+                                    <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                        <i class="fa fa-bolt text-white"></i>
+                                    </div>
+                                    <h4>Lightning Fast</h4>
+                                    <p class="mb-0">Millisecond response times with Cosmos DB's global distribution and automatic indexing.</p>
+                                </div>
+                                <div class="col-12 wow zoomIn" data-wow-delay="0.6s">
+                                    <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                        <i class="fa fa-chart-line text-white"></i>
+                                    </div>
+                                    <h4>Real-time Analytics</h4>
+                                    <p class="mb-0">Interactive dashboards with enrollment trends, demographics, and performance metrics.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 wow zoomIn" data-wow-delay="0.9s" style="min-height: 350px;">
+                            <div class="position-relative h-100">
+                                <img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.1s" src="~/img/feature.jpg" style="object-fit: cover;">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row g-5">
+                                    <div class="col-12 wow zoomIn" data-wow-delay="0.4s">
+                                        <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                            <i class="fa fa-shield-alt text-white"></i>
+                                        </div>
+                                        <h4>Bank-Level Security</h4>
+                                        <p class="mb-0">OAuth 2.0 authentication with Google/GitHub, plus SAS tokens for secure file access.</p>
+                                    </div>
+                                    <div class="col-12 wow zoomIn" data-wow-delay="0.8s">
+                                        <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                            <i class="fa fa-cloud-upload-alt text-white"></i>
+                                        </div>
+                                        <h4>Auto-scaling</h4>
+                                        <p class="mb-0">Automatically scales with demand. Pay only for what you use with Azure's consumption model.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Features End -->
+                <!-- Service Start -->
+                <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="container py-5">
+                        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                            <h5 class="fw-bold text-primary text-uppercase">Azure Services</h5>
+                            <h1 class="mb-0">Built on World-Class Infrastructure</h1>
+                        </div>
+                        <div class="row g-5">
+                            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                                    <div class="service-icon">
+                                        <i class="fa fa-database text-white"></i>
+                                    </div>
+                                    <h4 class="mb-3">Azure Cosmos DB</h4>
+                                    <p class="m-0">Globally distributed, multi-model database with millisecond response times and automatic indexing.</p>
+                                    <span class="mt-3 badge bg-primary">99.999% SLA</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
+                                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                                    <div class="service-icon">
+                                        <i class="fa fa-cloud-upload-alt text-white"></i>
+                                    </div>
+                                    <h4 class="mb-3">Azure Blob Storage</h4>
+                                    <p class="m-0">Secure, scalable object storage for student profile images with SAS token authentication.</p>
+                                    <span class="mt-3 badge bg-success">Hot Tier</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.9s">
+                                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                                    <div class="service-icon">
+                                        <i class="fab fa-microsoft text-white"></i>
+                                    </div>
+                                    <h4 class="mb-3">Microsoft Entra ID</h4>
+                                    <p class="m-0">OAuth 2.0 authentication with Google and GitHub integration for secure, passwordless login.</p>
+                                    <span class="mt-3 badge bg-warning">OAuth 2.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Service End -->
+                <!-- Testimonial Start -->
+                <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="container py-5">
+                        <div class="section-title text-center position-relative pb-3 mb-4 mx-auto" style="max-width: 600px;">
+                            <h5 class="fw-bold text-primary text-uppercase">Testimonial</h5>
+                            <h1 class="mb-0">What Our Clients Say About Our System</h1>
+                        </div>
+                        <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.6s">
+                            <div class="testimonial-item bg-light my-4">
+                                <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
+                                    <img class="img-fluid rounded" src="~/img/testimonial-1.jpg" style="width: 60px; height: 60px;">
+                                        <div class="ps-4">
+                                            <h4 class="text-primary mb-1">Sarah Johnson</h4>
+                                            <small class="text-uppercase">Principal</small>
+                                        </div>
+                                    </div>
+                                    <div class="pt-4 pb-5 px-5">
+                                        "The Azure integration has transformed how we manage student records. The performance is incredible!"
+                                    </div>
+                                </div>
+                                <div class="testimonial-item bg-light my-4">
+                                    <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
+                                        <img class="img-fluid rounded" src="~/img/testimonial-2.jpg" style="width: 60px; height: 60px;">
+                                            <div class="ps-4">
+                                                <h4 class="text-primary mb-1">Michael Nkosi</h4>
+                                                <small class="text-uppercase">IT Director</small>
+                                            </div>
+                                        </div>
+                                        <div class="pt-4 pb-5 px-5">
+                                            "The analytics dashboard gives us real-time insights into enrollment trends. Game changer!"
+                                        </div>
+                                    </div>
+                                    <div class="testimonial-item bg-light my-4">
+                                        <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
+                                            <img class="img-fluid rounded" src="~/img/testimonial-3.jpg" style="width: 60px; height: 60px;">
+                                                <div class="ps-4">
+                                                    <h4 class="text-primary mb-1">Thabo Molefe</h4>
+                                                    <small class="text-uppercase">Administrator</small>
+                                                </div>
+                                            </div>
+                                            <div class="pt-4 pb-5 px-5">
+                                                "The archive feature is brilliant! We can restore students anytime without losing data."
+                                            </div>
+                                        </div>
+                                        <div class="testimonial-item bg-light my-4">
+                                            <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
+                                                <img class="img-fluid rounded" src="~/img/testimonial-4.jpg" style="width: 60px; height: 60px;">
+                                                    <div class="ps-4">
+                                                        <h4 class="text-primary mb-1">Emma Williams</h4>
+                                                        <small class="text-uppercase">Registrar</small>
+                                                    </div>
+                                                </div>
+                                                <div class="pt-4 pb-5 px-5">
+                                                    "Student management has never been easier. The interface is intuitive and powerful."
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Testimonial End -->
+                                <!-- Team Start -->
+                                <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+                                    <div class="container py-5">
+                                        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                                            <h5 class="fw-bold text-primary text-uppercase">Team Members</h5>
+                                            <h1 class="mb-0">Professional Stuffs Ready to Help Your Business</h1>
+                                        </div>
+                                        <div class="row g-5">
+                                            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
+                                                <div class="team-item bg-light rounded overflow-hidden">
+                                                    <div class="team-img position-relative overflow-hidden">
+                                                        <img class="img-fluid w-100" src="~/img/team-1.jpg" alt="">
+                                                            <div class="team-social">
+                                                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                                                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                                                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                                                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-center py-4">
+                                                            <h4 class="text-primary">Dr. James Wilson</h4>
+                                                            <p class="text-uppercase m-0">Technical Director</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.6s">
+                                                    <div class="team-item bg-light rounded overflow-hidden">
+                                                        <div class="team-img position-relative overflow-hidden">
+                                                            <img class="img-fluid w-100" src="~/img/team-2.jpg" alt="">
+                                                                <div class="team-social">
+                                                                    <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                                                                    <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                                                                    <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                                                                    <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
+                                                                </div>
+                                                            </div>
+                                                            <div class="text-center py-4">
+                                                                <h4 class="text-primary">Dr. Sarah Chen</h4>
+                                                                <p class="text-uppercase m-0">Lead Architect</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 wow slideInUp" data-wow-delay="0.9s">
+                                                        <div class="team-item bg-light rounded overflow-hidden">
+                                                            <div class="team-img position-relative overflow-hidden">
+                                                                <img class="img-fluid w-100" src="~/img/team-3.jpg" alt="">
+                                                                    <div class="team-social">
+                                                                        <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                                                                        <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                                                                        <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                                                                        <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="text-center py-4">
+                                                                    <h4 class="text-primary">Prof. Michael Brown</h4>
+                                                                    <p class="text-uppercase m-0">Product Manager</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Team End -->
+                                            <!-- Vendor Start -->
+                                            <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+                                                <div class="container py-5 mb-5">
+                                                    <div class="bg-white">
+                                                        <div class="owl-carousel vendor-carousel">
+                                                            <img src="~/img/vendor-1.jpg" alt="">
+                                                                <img src="~/img/vendor-2.jpg" alt="">
+                                                                    <img src="~/img/vendor-3.jpg" alt="">
+                                                                        <img src="~/img/vendor-4.jpg" alt="">
+                                                                            <img src="~/img/vendor-5.jpg" alt="">
+                                                                                <img src="~/img/vendor-6.jpg" alt="">
+                                                                                    <img src="~/img/vendor-7.jpg" alt="">
+                                                                                        <img src="~/img/vendor-8.jpg" alt="">
+                                                                                            <img src="~/img/vendor-9.jpg" alt="">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- Vendor End -->

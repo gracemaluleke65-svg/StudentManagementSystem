@@ -1,0 +1,308 @@
+﻿@inject StudentManagementSystem.Services.AzureBlobStorageService BlobStorageService
+
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+    
+    // Provide default values for ViewBag properties
+    var total = ViewBag.Total ?? 0;
+    var active = ViewBag.Active ?? 0;
+    var inactive = ViewBag.Inactive ?? 0;
+    var activePercentage = ViewBag.ActivePercentage ?? 0;
+    var inactivePercentage = ViewBag.InactivePercentage ?? 0;
+    var months = ViewBag.Months ?? new List<string>();
+    var counts = ViewBag.Counts ?? new List<int>();
+    var topDomains = ViewBag.TopDomains ?? new List<string>();
+    var domainCounts = ViewBag.DomainCounts ?? new List<int>();
+    var recentStudents = ViewBag.RecentStudents ?? new List<StudentManagementSystem.Models.Student>();
+}
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 bg-header" style="margin-bottom: 90px;">
+    <div class="row py-5">
+        <div class="col-12 pt-lg-5 mt-lg-5 text-center">
+            <h1 class="display-4 text-white animated zoomIn">Analytics Dashboard</h1>
+            <a asp-controller="Home" asp-action="Index" class="h5 text-white">Home</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="#" class="h5 text-white">Analytics</a>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Analytics Content Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+            <h5 class="fw-bold text-primary text-uppercase">Real-time Intelligence</h5>
+            <h1 class="mb-0">Live Data from Azure Cosmos DB</h1>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="bg-primary text-white rounded p-4 text-center">
+                    <i class="fa fa-users fa-3x mb-3"></i>
+                    <h2 class="display-4 fw-bold mb-0">@ViewBag.Total</h2>
+                    <p class="mb-0">Total Students</p>
+                    <small><i class="fa fa-arrow-up me-1"></i> +12% from last month</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-success text-white rounded p-4 text-center">
+                    <i class="fa fa-user-check fa-3x mb-3"></i>
+                    <h2 class="display-4 fw-bold mb-0">@ViewBag.Active</h2>
+                    <p class="mb-0">Active Students</p>
+                    <small>@ViewBag.ActivePercentage% of total enrollment</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-secondary text-white rounded p-4 text-center">
+                    <i class="fa fa-user-slash fa-3x mb-3"></i>
+                    <h2 class="display-4 fw-bold mb-0">@ViewBag.Inactive</h2>
+                    <p class="mb-0">Inactive Students</p>
+                    <small>@ViewBag.InactivePercentage% of total enrollment</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="bg-light rounded p-4 h-100">
+                    <h4 class="mb-4">
+                        <i class="fa fa-chart-pie text-primary me-2"></i>
+                        Enrollment Distribution
+                    </h4>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="enrolmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-light rounded p-4 h-100">
+                    <h4 class="mb-4">
+                        <i class="fa fa-chart-line text-success me-2"></i>
+                        Registration Trends (Last 6 Months)
+                    </h4>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain Analysis & Recent Activity -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-5">
+                <div class="bg-light rounded p-4 h-100">
+                    <h4 class="mb-4">
+                        <i class="fa fa-envelope text-info me-2"></i>
+                        Email Domain Analysis
+                    </h4>
+                    <div style="position: relative; height: 300px;">
+                        <canvas id="domainChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="bg-light rounded p-4 h-100">
+                    <h4 class="mb-4">
+                        <i class="fa fa-history text-warning me-2"></i>
+                        Recent Student Activity
+                    </h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Profile</th>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.RecentStudents != null && ViewBag.RecentStudents.Count > 0)
+                                {
+                                    @foreach (var student in ViewBag.RecentStudents)
+                                    {
+                                        var sasUrl = !string.IsNullOrEmpty(student.ProfileImageUrl) ?
+                                            BlobStorageService.GetBlobSasUri(BlobStorageService.GetBlobNameFromUrl(student.ProfileImageUrl)) : null;
+                                        
+                                        <tr>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(sasUrl))
+                                                {
+                                                    <img src="@sasUrl" alt="@student.FullName" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-primary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                        <i class="fa fa-user text-primary"></i>
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td><span class="fw-semibold">@student.FullName</span></td>
+                                            <td class="text-muted small">@student.Email</td>
+                                            <td>
+                                                <span class="badge @(student.EnrolmentStatus == "Active" ? "bg-success" : "bg-secondary") rounded-pill px-3">
+                                                    @student.EnrolmentStatus
+                                                </span>
+                                            </td>
+                                            <td class="text-muted small">@student.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <i class="fa fa-inbox fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted mb-0">No recent activity found</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Azure System Metrics -->
+        <div class="row">
+            <div class="col-12">
+                <div class="bg-dark text-white rounded p-4">
+                    <h4 class="mb-4">
+                        <i class="fa fa-cloud-upload-alt me-2"></i>
+                        Azure Infrastructure Metrics
+                    </h4>
+                    <div class="row g-4">
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 rounded bg-white bg-opacity-10">
+                                <i class="fa fa-database fa-2x text-primary mb-2"></i>
+                                <h6 class="mb-1">Cosmos DB</h6>
+                                <small class="text-white-50">RU/s: 400 (Auto-scale)</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-success">99.995% Uptime</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 rounded bg-white bg-opacity-10">
+                                <i class="fa fa-cloud-upload-alt fa-2x text-success mb-2"></i>
+                                <h6 class="mb-1">Blob Storage</h6>
+                                <small class="text-white-50">Hot Tier, LRS</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-info">99.9% Durability</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 rounded bg-white bg-opacity-10">
+                                <i class="fa fa-tachometer-alt fa-2x text-warning mb-2"></i>
+                                <h6 class="mb-1">Response Time</h6>
+                                <small class="text-white-50">Avg Query Latency</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-primary">&lt;12ms</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 rounded bg-white bg-opacity-10">
+                                <i class="fa fa-shield-alt fa-2x text-danger mb-2"></i>
+                                <h6 class="mb-1">Security</h6>
+                                <small class="text-white-50">Encryption Standard</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-danger">AES-256</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Analytics Content End -->
+@section Scripts {
+    <script>
+        // Enrollment Status Doughnut Chart
+        const ctx1 = document.getElementById('enrolmentChart').getContext('2d');
+        new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+        labels: ['Active Students', 'Inactive Students'],
+        datasets: [{
+        data: [@ViewBag.Active, @ViewBag.Inactive],
+        backgroundColor: ['#10b981', '#94a3b8'],
+        borderWidth: 0,
+        hoverOffset: 8,
+        cutout: '65%'
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+        callbacks: {
+        label: function(context) {
+        const value = context.parsed || 0;
+        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+        const percentage = ((value / total) * 100).toFixed(1);
+        return context.label + ': ' + value + ' (' + percentage + '%)';
+        }
+        }
+        }
+        }
+        }
+        });
+
+        // Monthly Registrations Bar Chart
+        const ctx2 = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(ctx2, {
+        type: 'bar',
+        data: {
+        labels: @Html.Raw(Json.Serialize(ViewBag.Months)),
+        datasets: [{
+        label: 'New Registrations',
+        data: @Html.Raw(Json.Serialize(ViewBag.Counts)),
+        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+        borderRadius: 8
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+        });
+
+        // Domain Horizontal Bar Chart
+        const ctx3 = document.getElementById('domainChart').getContext('2d');
+        new Chart(ctx3, {
+        type: 'bar',
+        data: {
+        labels: @Html.Raw(Json.Serialize(ViewBag.TopDomains)),
+        datasets: [{
+        label: 'Number of Students',
+        data: @Html.Raw(Json.Serialize(ViewBag.DomainCounts)),
+        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+        borderRadius: 8
+        }]
+        },
+        options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+        });
+    </script>
+}

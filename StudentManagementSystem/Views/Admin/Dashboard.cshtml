@@ -1,0 +1,316 @@
+﻿@using StudentManagementSystem.ViewModels
+@inject StudentManagementSystem.Services.AzureBlobStorageService BlobStorageService
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 bg-header" style="margin-bottom: 90px;">
+    <div class="row py-5">
+        <div class="col-12 pt-lg-5 mt-lg-5 text-center">
+            <h1 class="display-4 text-white animated zoomIn">Admin Dashboard</h1>
+            <a asp-controller="Home" asp-action="Index" class="h5 text-white">Home</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="#" class="h5 text-white">Admin</a>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Admin Dashboard Content Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container py-5">
+        
+        <!-- System Status Bar -->
+        <div class="alert alert-info text-center mb-4">
+            <i class="fa fa-circle text-success me-2"></i> Live System
+            <i class="fa fa-clock ms-3 me-1"></i> Last sync: @Model.LastSyncTime.ToString("HH:mm:ss")
+        </div>
+
+        <!-- Quick Stats Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="bg-primary text-white rounded p-4 text-center">
+                    <i class="fa fa-users fa-3x mb-3"></i>
+                    <h2 class="display-4 fw-bold mb-0">@Model.TotalStudents</h2>
+                    <p class="mb-0">Total Students</p>
+                    <small><i class="fa fa-arrow-up me-1"></i> +12% this month</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="bg-success text-white rounded p-4 text-center">
+                    <i class="fa fa-user-check fa-3x mb-3"></i>
+                    <h2 class="display-4 fw-bold mb-0">@Model.ActiveStudents</h2>
+                    <p class="mb-0">Active Students</p>
+                    <small>@Model.ActivePercentage% of total</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="bg-warning text-dark rounded p-4 text-center">
+                    <i class="fa fa-archive fa-3x mb-3"></i>
+                    <h2 class="display-4 fw-bold mb-0">@Model.ArchivedStudents</h2>
+                    <p class="mb-0">Archived Students</p>
+                    <small>@Model.ArchivedPercentage% archived</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="bg-secondary text-white rounded p-4 text-center">
+                    <i class="fa fa-user-shield fa-3x mb-3"></i>
+                    <h2 class="display-4 fw-bold mb-0">@Model.TotalUsers</h2>
+                    <p class="mb-0">System Users</p>
+                    <small><i class="fa fa-shield-alt me-1"></i> @Model.AdminUsers Admins</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="bg-light rounded p-4 h-100">
+                    <h4 class="mb-4">
+                        <i class="fa fa-chart-pie text-primary me-2"></i>
+                        Student Status Distribution
+                    </h4>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-light rounded p-4 h-100">
+                    <h4 class="mb-4">
+                        <i class="fa fa-chart-line text-success me-2"></i>
+                        Registration & Activity Trends
+                    </h4>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="bg-light rounded p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0">
+                            <i class="fa fa-history text-primary me-2"></i>
+                            Recent Student Registrations
+                        </h4>
+                        <a asp-controller="Student" asp-action="Index" class="btn btn-sm btn-primary">
+                            View All <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Profile</th>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model.RecentStudents)
+                                {
+                                    var sasUrl = !string.IsNullOrEmpty(student.ProfileImageUrl) ?
+                                        BlobStorageService.GetBlobSasUri(BlobStorageService.GetBlobNameFromUrl(student.ProfileImageUrl)) : null;
+                                    
+                                    <tr>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(sasUrl))
+                                            {
+                                                <img src="@sasUrl" alt="@student.FullName" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;" />
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-primary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                    <i class="fa fa-user text-primary"></i>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td><span class="fw-semibold">@student.FullName</span></td>
+                                        <td class="small text-muted">@student.Email</td>
+                                        <td>
+                                            <span class="badge @(student.EnrolmentStatus == "Active" ? "bg-success" : "bg-secondary") rounded-pill px-3">
+                                                @student.EnrolmentStatus
+                                            </span>
+                                        </td>
+                                        <td class="small text-muted">@student.CreatedAt.ToString("MMM dd")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-light rounded p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0">
+                            <i class="fa fa-trash-restore text-warning me-2"></i>
+                            Recently Archived
+                        </h4>
+                        <a asp-controller="Archive" asp-action="Index" class="btn btn-sm btn-warning">
+                            View Archive <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Profile</th>
+                                    <th>Student</th>
+                                    <th>Email</th>
+                                    <th>Archived Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model.RecentArchived)
+                                {
+                                    var sasUrl = !string.IsNullOrEmpty(student.ProfileImageUrl) ?
+                                        BlobStorageService.GetBlobSasUri(BlobStorageService.GetBlobNameFromUrl(student.ProfileImageUrl)) : null;
+                                    
+                                    <tr>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(sasUrl))
+                                            {
+                                                <img src="@sasUrl" alt="@student.FullName" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover; border: 1px solid #f59e0b;" />
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-warning bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                    <i class="fa fa-archive text-warning"></i>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td><span class="fw-semibold">@student.FullName</span></td>
+                                        <td class="small text-muted">@student.Email</td>
+                                        <td class="small text-muted">@student.UpdatedAt.ToString("MMM dd, yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status Row -->
+        <div class="row">
+            <div class="col-12">
+                <div class="bg-dark text-white rounded p-4">
+                    <h4 class="mb-4">
+                        <i class="fa fa-cloud me-2"></i>
+                        Azure Infrastructure Status
+                    </h4>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="text-center p-3 rounded bg-white bg-opacity-10">
+                                <i class="fa fa-database fa-2x text-primary mb-2"></i>
+                                <h6 class="mb-1">Cosmos DB</h6>
+                                <span class="badge bg-success">@Model.CosmosDbStatus</span>
+                                <p class="small text-white-50 mt-2 mb-0">RU/s: 400 (Auto-scale)</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 rounded bg-white bg-opacity-10">
+                                <i class="fa fa-cloud-upload-alt fa-2x text-success mb-2"></i>
+                                <h6 class="mb-1">Blob Storage</h6>
+                                <span class="badge bg-success">@Model.BlobStorageStatus</span>
+                                <p class="small text-white-50 mt-2 mb-0">Hot Tier, LRS</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 rounded bg-white bg-opacity-10">
+                                <i class="fa fa-shield-alt fa-2x text-info mb-2"></i>
+                                <h6 class="mb-1">Authentication</h6>
+                                <span class="badge bg-info">OAuth 2.0 Active</span>
+                                <p class="small text-white-50 mt-2 mb-0">Google + GitHub</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Admin Dashboard Content End -->
+@section Scripts {
+    <script>
+        // Status Distribution Pie Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+        labels: @Html.Raw(Json.Serialize(Model.StatusLabels)),
+        datasets: [{
+        data: @Html.Raw(Json.Serialize(Model.StatusData)),
+        backgroundColor: @Html.Raw(Json.Serialize(Model.StatusColors)),
+        borderWidth: 0,
+        hoverOffset: 8,
+        cutout: '65%'
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+        callbacks: {
+        label: function(context) {
+        const value = context.parsed || 0;
+        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+        return context.label + ': ' + value + ' (' + percentage + '%)';
+        }
+        }
+        }
+        }
+        }
+        });
+
+        // Trend Line Chart
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        new Chart(trendCtx, {
+        type: 'line',
+        data: {
+        labels: @Html.Raw(Json.Serialize(Model.Months)),
+        datasets: [
+        {
+        label: 'New Registrations',
+        data: @Html.Raw(Json.Serialize(Model.RegistrationTrend)),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4
+        },
+        {
+        label: 'Active Students',
+        data: @Html.Raw(Json.Serialize(Model.ActiveTrend)),
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16, 185, 129, 0.05)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4
+        }
+        ]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { position: 'top' } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+        });
+    </script>
+}

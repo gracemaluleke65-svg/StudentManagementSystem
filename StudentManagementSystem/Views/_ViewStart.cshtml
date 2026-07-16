@@ -1,0 +1,5 @@
+﻿@{
+    Layout = "_Layout";
+    // Set SAST time for all views (SAST = UTC+2)
+    ViewBag.SastTime = DateTime.UtcNow.AddHours(2).ToString("ddd, dd MMM yyyy HH:mm:ss");
+}
