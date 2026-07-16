@@ -5,38 +5,6 @@ Designed for educational institutions to manage student records, track enrolment
 
 ---
 
-## 📋 Table of Contents
-1. [Overview](#overview)
-2. [Key Features](#key-features)
-3. [Technology Stack](#technology-stack)
-4. [Prerequisites](#prerequisites)
-5. [Setup & Configuration](#setup--configuration)
-   - [Clone the Repository](#1-clone-the-repository)
-   - [Azure Cosmos DB Setup](#2-azure-cosmos-db-setup)
-   - [Azure Blob Storage Setup](#3-azure-blob-storage-setup)
-   - [OAuth Providers (Google / GitHub)](#4-oauth-providers-google--github)
-   - [User Secrets vs appsettings.json](#5-user-secrets-vs-appsettingsjson)
-   - [Run the Application](#6-run-the-application)
-6. [Default Admin Credentials](#default-admin-credentials)
-7. [Project Structure](#project-structure)
-8. [Testing](#testing)
-   - [Test Frameworks](#test-frameworks)
-   - [Running Tests](#running-tests)
-   - [Test Coverage](#test-coverage)
-   - [Writing New Tests](#writing-new-tests)
-   - [CI/CD Pipeline (GitHub Actions)](#cicd-pipeline-github-actions)
-9. [Deployment](#deployment)
-   - [Azure App Service](#azure-app-service)
-   - [Environment Variables in Production](#environment-variables-in-production)
-10. [Logging & Monitoring](#logging--monitoring)
-11. [Security Considerations](#security-considerations)
-12. [Troubleshooting Common Issues](#troubleshooting-common-issues)
-13. [Contributing](#contributing)
-14. [License](#license)
-15. [Contact](#contact)
-
----
-
 ## 📖 Overview
 
 The **Student Management System** is a production-ready web application that allows:
