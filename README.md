@@ -1,101 +1,123 @@
 # 🎓 Student Management System
 
-A full-featured student management web application built with **ASP.NET Core 8 MVC**, **Azure Cosmos DB**, **Azure Blob Storage**, and **OAuth 2.0** (Google & GitHub) authentication.
+A full-featured student management web application built with **ASP.NET Core 8 MVC**, **Azure Cosmos DB**, **Azure Blob Storage**, and **OAuth 2.0** (Google & GitHub) authentication.  
+Designed for educational institutions to manage student records, track enrolment status, and analyse trends – all backed by enterprise-grade Azure cloud services.
 
 ---
 
 ## 📋 Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Prerequisites](#prerequisites)
-- [Setup & Configuration](#setup--configuration)
-  - [1. Clone the Repository](#1-clone-the-repository)
-  - [2. Configure Azure Services](#2-configure-azure-services)
-  - [3. Configure OAuth Providers](#3-configure-oauth-providers)
-  - [4. Run the Application](#4-run-the-application)
-- [Default Admin Credentials](#default-admin-credentials)
-- [Project Structure](#project-structure)
-- [Testing](#testing)
-- [Security Considerations](#security-considerations)
-- [Contributing](#contributing)
-- [License](#license)
+1. [Overview](#overview)
+2. [Key Features](#key-features)
+3. [Technology Stack](#technology-stack)
+4. [Prerequisites](#prerequisites)
+5. [Setup & Configuration](#setup--configuration)
+   - [Clone the Repository](#1-clone-the-repository)
+   - [Azure Cosmos DB Setup](#2-azure-cosmos-db-setup)
+   - [Azure Blob Storage Setup](#3-azure-blob-storage-setup)
+   - [OAuth Providers (Google / GitHub)](#4-oauth-providers-google--github)
+   - [User Secrets vs appsettings.json](#5-user-secrets-vs-appsettingsjson)
+   - [Run the Application](#6-run-the-application)
+6. [Default Admin Credentials](#default-admin-credentials)
+7. [Project Structure](#project-structure)
+8. [Testing](#testing)
+   - [Test Frameworks](#test-frameworks)
+   - [Running Tests](#running-tests)
+   - [Test Coverage](#test-coverage)
+   - [Writing New Tests](#writing-new-tests)
+   - [CI/CD Pipeline (GitHub Actions)](#cicd-pipeline-github-actions)
+9. [Deployment](#deployment)
+   - [Azure App Service](#azure-app-service)
+   - [Environment Variables in Production](#environment-variables-in-production)
+10. [Logging & Monitoring](#logging--monitoring)
+11. [Security Considerations](#security-considerations)
+12. [Troubleshooting Common Issues](#troubleshooting-common-issues)
+13. [Contributing](#contributing)
+14. [License](#license)
+15. [Contact](#contact)
 
 ---
 
 ## 📖 Overview
 
-The **Student Management System** is a web application that allows educational institutions to manage student records efficiently. It supports:
+The **Student Management System** is a production-ready web application that allows:
 
-- **CRUD operations** for students.
-- **Recycle Bin** – soft-delete and restore functionality.
-- **Image uploads** for student profiles (stored in Azure Blob Storage).
-- **Secure authentication** using OAuth 2.0 (Google, GitHub) or admin login.
-- **Role-based authorization** – Admin and User roles.
-- **Analytics dashboard** with charts and trends.
-- **Search and pagination**.
+- **Admins** to manage student records (CRUD), archive inactive students, view analytics, and manage users.
+- **Users** (staff/educators) to view student lists, search, and update profiles.
+- **All users** to authenticate via Google or GitHub OAuth, with a fallback admin login.
+
+The system uses **Azure Cosmos DB** for scalable NoSQL data storage and **Azure Blob Storage** for student profile images, with automatic container creation and image resizing.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-### 👤 User Management
-- OAuth login with **Google** and **GitHub**.
-- Fallback **admin login** with email/password.
-- Session-based cookie authentication.
+### 👤 Authentication & Authorization
+- OAuth 2.0 with **Google** and **GitHub**.
+- Cookie-based authentication with 8‑hour sliding expiry.
+- Role-based access: `Admin` vs `User`.
+- Fallback admin login (email/password).
 
 ### 👨‍🎓 Student Management
-- **Create, Read, Update, Delete** (soft-delete).
-- **Recycle Bin** – restore permanently deleted records.
-- **Profile image upload** (resized to 400x400, stored in Azure Blob).
-- **Search** by name, email, or ID.
-- **Pagination** and sorting.
+- **CRUD** operations with server-side validation.
+- **Soft delete** (moves to Recycle Bin) and **permanent delete**.
+- **Recycle Bin** – restore deleted students or empty permanently.
+- **Profile image upload** – automatic resize to 400x400, stored in Azure Blob, validation (JPEG/PNG, ≤5MB, ≤5000px).
+- **Search** by name, email, or ID with pagination (10, 25, 50 per page).
 
-### 📊 Analytics & Dashboard
-- Admin dashboard showing:
-  - Total / Active / Inactive / Archived students.
-  - Monthly registration trends.
-  - Status distribution charts.
-  - Recent activities.
+### 📊 Analytics & Admin Dashboard
+- Real-time metrics: total, active, inactive, archived students.
+- Monthly registration trends (last 6 months).
+- Status distribution chart (Active / Inactive / Archived).
+- Recent activity feed (latest 5 additions and deletions).
+- System health checks (Cosmos DB & Blob Storage status).
 
 ### ☁️ Azure Integration
-- **Cosmos DB** (NoSQL) for student and user data.
-- **Blob Storage** for profile images.
-- Automatic container creation on startup.
+- **Cosmos DB** – containers created automatically on startup.
+- **Blob Storage** – secure, scalable image hosting.
+- **SAS URLs** – temporary access to private images.
 
-### 🔐 Security
-- HTTPS enforced.
-- Secure cookies with `HttpOnly`, `Secure`, `SameSite`.
-- Admin-only policies.
+### 🛡️ Security
+- HTTPS enforced in production.
+- Secure cookies (`HttpOnly`, `Secure`, `SameSite=Lax`).
+- Anti-forgery tokens on all POST forms.
+- Input validation and sanitization.
+- No sensitive data in logs.
+
+### 🧪 Testing & Quality
+- **Unit tests** for all controllers and services.
+- **Mocked dependencies** (Moq) for isolated testing.
+- **FluentAssertions** for readable assertions.
+- Test coverage >80% on core logic.
 
 ---
 
 ## 🛠 Technology Stack
 
-| Component               | Technology                              |
-|-------------------------|-----------------------------------------|
-| **Framework**           | ASP.NET Core 8 MVC                      |
-| **Language**            | C# 12                                   |
-| **Database**            | Azure Cosmos DB (NoSQL)                 |
-| **Blob Storage**        | Azure Blob Storage                      |
-| **Authentication**      | Cookie + OAuth 2.0 (Google, GitHub)    |
-| **Image Processing**    | SixLabors.ImageSharp                    |
-| **Testing**             | xUnit, Moq, FluentAssertions            |
-| **Frontend**            | Bootstrap 5, Razor views, jQuery       |
-| **Cloud Services**      | Azure (Cosmos DB, Blob Storage)         |
-| **Package Manager**     | NuGet                                   |
+| Category               | Technology / Library                                                                 |
+|------------------------|--------------------------------------------------------------------------------------|
+| **Framework**          | ASP.NET Core 8 MVC                                                                   |
+| **Language**           | C# 12                                                                                |
+| **Database**           | Azure Cosmos DB (NoSQL, SQL API)                                                     |
+| **Blob Storage**       | Azure Blob Storage                                                                   |
+| **Authentication**     | Cookie + OAuth 2.0 (Google, GitHub) – `Microsoft.AspNetCore.Authentication.Google`   |
+| **Image Processing**   | SixLabors.ImageSharp (v3.1.12)                                                       |
+| **Testing**            | xUnit, Moq, FluentAssertions, Microsoft.AspNetCore.Mvc.Testing                       |
+| **Frontend**           | Bootstrap 5, jQuery, Razor Views, Chart.js (for analytics)                           |
+| **JSON Serialisation** | Newtonsoft.Json (v13.0.3)                                                            |
+| **Logging**            | Built-in `ILogger`, Console + Debug sinks                                            |
+| **CI/CD**              | GitHub Actions (optional, configurable)                                              |
+| **Hosting**            | Azure App Service (recommended)                                                      |
 
 ---
 
 ## 📦 Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [Visual Studio 2022+](https://visualstudio.microsoft.com/) or VS Code
-- **Azure Subscription** (for Cosmos DB and Blob Storage) – free tier available
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (required)
+- [Visual Studio 2022+](https://visualstudio.microsoft.com/) (with ASP.NET workload) or VS Code with C# extension
+- **Azure Subscription** (free tier available) for Cosmos DB and Blob Storage
 - **Git** (for cloning)
-- **Google OAuth credentials** and/or **GitHub OAuth app**
-
-> If you don't have Azure, you can modify the code to use in-memory or local alternatives (but this guide assumes Azure).
+- **Google Cloud Project** (for OAuth) and/or **GitHub OAuth App**
+- (Optional) **Azure CLI** for deployment
 
 ---
 
